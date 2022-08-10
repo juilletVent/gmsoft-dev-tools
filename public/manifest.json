@@ -13,17 +13,11 @@
   "action": {
     "default_icon": "assets/cookie.png",
     "default_title": "click to show cookies",
-    "default_popup": "popup.html"
+    "default_popup": "config/popup.html"
   },
-  "content_scripts": [
-    {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["popup.js"]
-    }
-  ],
   "homepage_url": "https://www.baidu.com",
   "background": {
     "service_worker": "background.js"
   },
-  "options_page": "options.html"
+  "options_page": "config/options.html"
 }
