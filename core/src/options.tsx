@@ -1,5 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ConfigProvider } from "antd";
+import "antd/dist/antd.min.css";
+import zhCN from "antd/es/locale/zh_CN";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import Options from "./app/Options/Options";
@@ -9,7 +12,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Options />
+    <ConfigProvider locale={zhCN}>
+      <Options />
+    </ConfigProvider>
   </React.StrictMode>
 );
 

@@ -3,7 +3,7 @@
   "name": "Gmsoft Dev Tools",
   "version": "0.0.1",
   "description": "大家软件前端开发工具",
-  "permissions": ["webRequest", "cookies", "storage", "tabs"],
+  "permissions": ["cookies", "storage", "tabs"],
   "host_permissions": ["*://*/*"],
   "icons": {
     "16": "assets/cookie.png",
@@ -12,12 +12,26 @@
   },
   "action": {
     "default_icon": "assets/cookie.png",
-    "default_title": "click to show cookies",
+    "default_title": "Gmsoft Dev Tools",
     "default_popup": "config/popup.html"
   },
-  "homepage_url": "https://www.baidu.com",
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
-  "options_page": "config/options.html"
+  "options_page": "config/options.html",
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "matches": ["*://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

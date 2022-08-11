@@ -6,8 +6,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: {
-    popup: './src/popup.ts',
-    background: './src/background.ts'
+    popup: './src/popup',
+    background: './src/background',
+    content: './src/content',
+    inject: './src/inject'
   },
   output: {
     filename: '[name].js',
