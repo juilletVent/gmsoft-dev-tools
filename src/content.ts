@@ -21,23 +21,22 @@
     removeNode("script[data-enable-api-hooks]");
   }
 
-  chrome.runtime.onMessage.addListener((message) => {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    console.log("message.type: ", message.type);
     if (message.type === "hooked") {
       enableApiHooks();
     }
     if (message.type === "unhooked") {
       disableApiHooks();
     }
+    sendResponse({ type: "done" });
   });
 
-  enableApiHooks();
-
-  chrome.runtime.sendMessage(
-    { info: "Hello background - from content" },
-    (res) => {
-      console.log("content receive: ", res);
+  chrome.storage.sync.get("open", (res) => {
+    if (res.open) {
+      enableApiHooks();
     }
-  );
+  });
 
   document.addEventListener("gmsoftDevEvent", (e: any) => {
     console.log("e: ", e);
