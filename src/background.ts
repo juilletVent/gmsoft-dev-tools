@@ -1,4 +1,15 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("background receive: ", message);
-  sendResponse({ info: "Hello content - from background" });
+  console.log("message: ", message);
+  if (message.type === "switch") {
+    chrome.tabs.query(
+      { active: true, lastFocusedWindow: true },
+      function (tabs) {
+        if (tabs[0] && tabs[0].id) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            type: "unhooked",
+          });
+        }
+      }
+    );
+  }
 });

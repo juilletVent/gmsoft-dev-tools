@@ -4,12 +4,13 @@
   "description": "大家软件前端开发工具",
   "main": "index.js",
   "scripts": {
+    "postinstall": "yarn --cwd=./core install ",
     "dev": "cross-env NODE_ENV=development webpack -w",
     "build": "cross-env NODE_ENV=production webpack",
     "postbuild": "npm --prefix=./core run build",
     "build-core": "npm --prefix=./core run build",
-    "postinstall": "yarn --cwd=./core install ",
-    "start-core": "yarn --cwd=./core start "
+    "start-core": "yarn --cwd=./core start",
+    "build-extension": "cross-env NODE_ENV=production webpack"
   },
   "keywords": [],
   "author": "xhmm",
@@ -22,6 +23,7 @@
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.1.0",
     "cross-env": "^7.0.3",
+    "nodemon": "^2.0.19",
     "typescript": "^4.0.2",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"

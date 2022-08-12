@@ -9,6 +9,12 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     const targetArgs = args;
     console.log("args: ", args);
     this.requestUrl = args[1];
+
+    const event = new CustomEvent<any>("gmsoftDevEvent", {
+      detail: { url: args[1] },
+    });
+    document.dispatchEvent(event);
+
     if (args[1].includes("/zcjopenbid/activities/progress")) {
       targetArgs[1] = `//${window.location.host}`;
     }

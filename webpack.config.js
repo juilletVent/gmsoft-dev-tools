@@ -9,7 +9,8 @@ module.exports = {
     popup: './src/popup',
     background: './src/background',
     content: './src/content',
-    inject: './src/inject'
+    enableHookXHR: './src/inject/enableHookXHR',
+    disableHookXHR: './src/inject/disableHookXHR',
   },
   output: {
     filename: '[name].js',

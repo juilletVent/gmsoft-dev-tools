@@ -67,7 +67,7 @@
   },
   "scripts": {
     "start": "cross-env PUBLIC_URL=/config BUILD_PATH=config PORT=8000 node scripts/start.js ",
-    "build": "cross-env PUBLIC_URL=/config BUILD_PATH=config node scripts/build.js",
+    "build": "cross-env PUBLIC_URL=/config BUILD_PATH=config GENERATE_SOURCEMAP=false node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
