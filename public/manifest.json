@@ -6,12 +6,12 @@
   "permissions": ["cookies", "storage", "tabs"],
   "host_permissions": ["*://*/*"],
   "icons": {
-    "16": "assets/cookie.png",
-    "48": "assets/cookie.png",
-    "128": "assets/cookie.png"
+    "16": "assets/logo.png",
+    "48": "assets/logo.png",
+    "128": "assets/logo.png"
   },
   "action": {
-    "default_icon": "assets/cookie.png",
+    "default_icon": "assets/logo.png",
     "default_title": "Gmsoft Dev Tools",
     "default_popup": "config/popup.html"
   },

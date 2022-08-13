@@ -6,11 +6,11 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: {
-    popup: './src/popup',
-    background: './src/background',
-    content: './src/content',
-    enableHookXHR: './src/inject/enableHookXHR',
-    disableHookXHR: './src/inject/disableHookXHR',
+    popup: './extension/popup',
+    background: './extension/background',
+    content: './extension/content',
+    enableHookXHR: './extension/inject/enableHookXHR',
+    disableHookXHR: './extension/inject/disableHookXHR',
   },
   output: {
     filename: '[name].js',

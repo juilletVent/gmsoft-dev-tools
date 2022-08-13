@@ -3,6 +3,6 @@
     "target": "ES6",
     "noEmit": true
   },
-  "include": ["src"],
+  "include": ["extension"],
   "exclude": ["node_modules"]
 }
