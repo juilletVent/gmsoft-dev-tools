@@ -1,17 +1,13 @@
-import React, { useCallback } from "react";
+import React from "react";
 import authorImg from "../../imgs/author.jpeg";
 import githubImg from "../../imgs/Github.svg";
+import { useLinks } from "../hooks/useLinks";
 import { PopupFooterLayout, PopupFooterLinks } from "./style";
 
 interface Prop {}
 
 function PopupFooter(props: Prop) {
-  const onProjectInfoOpen = useCallback(() => {
-    window.open("https://github.com/juilletVent/gmsoft-dev-tools");
-  }, []);
-  const onAuthorInfoOpen = useCallback(() => {
-    window.open("https://github.com/juilletVent");
-  }, []);
+  const { onProjectInfoOpen, onAuthorInfoOpen } = useLinks();
 
   return (
     <PopupFooterLayout>

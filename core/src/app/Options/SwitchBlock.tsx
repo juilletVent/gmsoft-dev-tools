@@ -1,23 +1,19 @@
-import { Form, Switch, Select } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { PopupContentLayout, PopupLayout } from "./style";
-import PopupHeader from "./PopupHeader";
-import PopupFooter from "./PopupFooter";
+import { Form, Switch, Select, Card } from "antd";
 import { FormGroup, FormItemTitle } from "../style/FormStyle";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { BlockLayout } from "./style";
 import { useSwitch } from "../hooks/useSwitch";
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
-interface Props {}
 
-function Popup(props: Props) {
+function SwitchBlock() {
   const [form] = Form.useForm();
   const { onValuesChange } = useSwitch(form);
 
   return (
-    <PopupLayout>
-      <PopupHeader />
-      <PopupContentLayout>
+    <BlockLayout>
+      <Card title="功能管理">
         <Form name="popup" form={form} onValuesChange={onValuesChange}>
           <FormGroup>
             <FormItemTitle>拦截开关</FormItemTitle>
@@ -41,10 +37,9 @@ function Popup(props: Props) {
             </FormItem>
           </FormGroup>
         </Form>
-      </PopupContentLayout>
-      <PopupFooter />
-    </PopupLayout>
+      </Card>
+    </BlockLayout>
   );
 }
 
-export default Popup;
+export default SwitchBlock;
