@@ -4,6 +4,8 @@ import { Button } from "antd";
 interface Props {}
 
 function Options(props: Props) {
+  console.log(chrome);
+
   return (
     <>
       Options

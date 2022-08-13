@@ -1,25 +1,36 @@
-import React, { useCallback, useEffect } from "react";
-import { Form, Switch } from "antd";
+import { useCallback, useEffect } from "react";
+import { Form, Switch, Select } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { PopupLayout } from "./style";
+import {
+  FormGroup,
+  FormItemTitle,
+  PopupContentLayout,
+  PopupLayout,
+} from "./style";
+import { ExtensionsStorageUtils } from "../../utils/storage";
+import PopupHeader from "./PopupHeader";
+import PopupFooter from "./PopupFooter";
 
 const { Item: FormItem } = Form;
+const { Option } = Select;
 interface Props {}
 
 function Popup(props: Props) {
   const [form] = Form.useForm();
-  console.log("form: ", form);
+
   const onSwitchChange = useCallback((val: boolean) => {
-    chrome.runtime.sendMessage({ type: "switch", val });
-    chrome.storage.sync.set({ open: val });
+    ExtensionsStorageUtils.setConfig({
+      open: val,
+    });
   }, []);
 
   useEffect(() => {
     if (form) {
       const { setFieldsValue } = form;
-      chrome.storage.sync.get("open", (res) => {
+      ExtensionsStorageUtils.getConfig().then((config) => {
         setFieldsValue({
-          open: res.open,
+          open: config.open,
+          platform: "test1-zcj",
         });
       });
     }
@@ -27,16 +38,34 @@ function Popup(props: Props) {
 
   return (
     <PopupLayout>
-      <Form name="popup" form={form}>
-        <FormItem label="代理主开关：" name="open" valuePropName="checked">
-          <Switch
-            checkedChildren={<CheckOutlined />}
-            unCheckedChildren={<CloseOutlined />}
-            defaultChecked
-            onChange={onSwitchChange}
-          />
-        </FormItem>
-      </Form>
+      <PopupHeader />
+      <PopupContentLayout>
+        <Form name="popup" form={form}>
+          <FormGroup>
+            <FormItemTitle>代理开关：</FormItemTitle>
+            <FormItem name="open" valuePropName="checked">
+              <Switch
+                checkedChildren={<CheckOutlined />}
+                unCheckedChildren={<CloseOutlined />}
+                defaultChecked
+                onChange={onSwitchChange}
+              />
+            </FormItem>
+          </FormGroup>
+          <FormGroup>
+            <FormItemTitle>目标平台：</FormItemTitle>
+            <FormItem name="platform">
+              <Select>
+                <Option value="test1-zcj">test1-zcj</Option>
+                <Option value="test1-xcj">test1-xcj</Option>
+                <Option value="show-zcj">show-zcj</Option>
+                <Option value="show-xcj">show-xcj</Option>
+              </Select>
+            </FormItem>
+          </FormGroup>
+        </Form>
+      </PopupContentLayout>
+      <PopupFooter />
     </PopupLayout>
   );
 }
