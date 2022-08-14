@@ -5,6 +5,10 @@ import { ExtensionsStorageUtils } from "../../utils/storage";
 export function useSwitch(form: FormInstance<any>) {
   const onValuesChange = useCallback((cvals: any, vals: any) => {
     ExtensionsStorageUtils.setConfig(vals);
+    chrome.runtime.sendMessage({
+      type: "switch",
+      val: vals.open,
+    });
   }, []);
 
   useEffect(() => {

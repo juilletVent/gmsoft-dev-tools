@@ -30,7 +30,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["enableHookXHR.js", "disableHookXHR.js*"],
+      "resources": ["enableHookXHR.js", "disableHookXHR.js"],
       "matches": ["<all_urls>"]
     }
   ]

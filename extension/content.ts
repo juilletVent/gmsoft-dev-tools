@@ -1,3 +1,5 @@
+import { ExtensionsStorageUtils } from "./utils/storage";
+
 (() => {
   function removeNode(selector) {
     const node = document.querySelector(selector);
@@ -32,8 +34,8 @@
     sendResponse({ type: "done" });
   });
 
-  chrome.storage.sync.get("open", (res) => {
-    if (res.open) {
+  ExtensionsStorageUtils.getConfig().then((config) => {
+    if (config.open) {
       enableApiHooks();
     }
   });
