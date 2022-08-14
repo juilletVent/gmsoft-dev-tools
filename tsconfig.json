@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "noEmit": true
+    "noEmit": true,
+    "moduleResolution": "node"
   },
   "include": ["extension"],
   "exclude": ["node_modules"]

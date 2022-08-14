@@ -24,7 +24,7 @@ import { ExtensionsStorageUtils } from "./utils/storage";
   }
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("message.type: ", message.type);
+    console.log("message: ", message);
     if (message.type === "hooked") {
       enableApiHooks();
     }

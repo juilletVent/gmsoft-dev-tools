@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Gmsoft Dev Tools",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "大家软件前端开发工具",
   "permissions": ["cookies", "storage", "tabs"],
   "host_permissions": ["*://*/*"],
@@ -22,12 +22,16 @@
   "options_page": "config/options.html",
   "content_scripts": [
     {
-      "all_frames": true,
+      "all_frames": false,
       "matches": ["*://*/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
   ],
+  "externally_connectable": {
+    "ids": ["*"],
+    "matches": ["*://localhost:*/*", "*://localhost/*"]
+  },
   "web_accessible_resources": [
     {
       "resources": ["enableHookXHR.js", "disableHookXHR.js"],

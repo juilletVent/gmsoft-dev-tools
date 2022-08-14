@@ -10,11 +10,6 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     console.log("args: ", args);
     this.requestUrl = args[1];
 
-    const event = new CustomEvent<any>("gmsoftDevEvent", {
-      detail: { url: args[1] },
-    });
-    document.dispatchEvent(event);
-
     if (args[1].includes("/zcjopenbid/activities/progress")) {
       targetArgs[1] = `//${window.location.host}`;
     }
@@ -22,8 +17,12 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     return super.open(...targetArgs);
   }
 
-  send(...args: any) {
-    return super.send(...args);
+  send(body: any) {
+    const event = new CustomEvent<any>("gmsoftDevEvent", {
+      detail: { url: this.requestUrl, body },
+    });
+    document.dispatchEvent(event);
+    return super.send(body);
   }
 
   get response() {
