@@ -29,6 +29,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "js-cookie": "^3.0.1",
     "lodash": "^4.17.21"
   }
 }

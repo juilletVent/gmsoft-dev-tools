@@ -1,42 +1,18 @@
-class MyXMLHttpRequest extends XMLHttpRequest {
-  private requestUrl: string;
+import Cookies from "js-cookie";
 
+class MyXMLHttpRequest extends XMLHttpRequest {
   constructor() {
     super();
   }
 
-  open(...args: any): void {
-    const targetArgs = args;
-    console.log("args: ", args);
-    this.requestUrl = args[1];
-
-    if (args[1].includes("/zcjopenbid/activities/progress")) {
-      targetArgs[1] = `//${window.location.host}`;
-    }
-    // @ts-ignore
-    return super.open(...targetArgs);
-  }
-
   send(body: any) {
-    const event = new CustomEvent<any>("gmsoftDevEvent", {
-      detail: { url: this.requestUrl, body },
+    Cookies.set("Auth", window.cookieConfig.value);
+    // FIXME: 如果多个域的接口并发访问，可能会导致cookie冲突，如果在loadstart事件中进行Cookie移除
+    // 整个访问的Cookie注入将不会生效，非常蛋疼，暂时没想到合适的解决方案，暂时先这样处理
+    super.addEventListener("loadend", () => {
+      Cookies.remove("Auth");
     });
-    document.dispatchEvent(event);
     return super.send(body);
-  }
-
-  get response() {
-    return {};
-  }
-  get responseText() {
-    const str = `{"nodes":[{"name":"签到","key":"openbid_sign","tasks":[{"name":"签到","key":"openbid_sign","state":3}]},{"name":"解密","key":"openbid_decrypt","tasks":[{"name":"解密","key":"openbid_decrypt","state":2}]},{"name":"确认","key":"openbid_confirm","tasks":[{"name":"确认","key":"openbid_confirm","state":1}]},{"name":"资格审查","key":"evaluate_qualif","tasks":[{"name":"资格审查","key":"evaluate_qualif","state":1}]},{"name":"评审报告","key":"evaluate_report","tasks":[{"name":"评审报告","key":"evaluate_report","state":1}]}]}`;
-    if (this.requestUrl.includes("/zcjopenbid/activities/progress")) {
-      // const data = JSON.parse(super.responseText);
-      // data.nodes.pop();
-      // return JSON.stringify(data);
-      return str;
-    }
-    return super.responseText;
   }
 }
 

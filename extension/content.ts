@@ -34,14 +34,18 @@ import { ExtensionsStorageUtils } from "./utils/storage";
     sendResponse({ type: "done" });
   });
 
+  document.addEventListener("requestCookie", () => {
+    chrome.runtime.sendMessage({ type: "getCookie" }, (response) => {
+      const event = new CustomEvent("receiveCookie", {
+        detail: response.data,
+      });
+      document.dispatchEvent(event);
+    });
+  });
+
   ExtensionsStorageUtils.getConfig().then((config) => {
     if (config.open) {
       enableApiHooks();
     }
-  });
-
-  document.addEventListener("gmsoftDevEvent", (e: any) => {
-    console.log("e: ", e);
-    chrome.runtime.sendMessage({ type: "request", data: e.detail });
   });
 })();
