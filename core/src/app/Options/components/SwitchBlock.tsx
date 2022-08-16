@@ -1,13 +1,19 @@
 import { Form, Switch, Select, Card } from "antd";
-import { FormGroup, FormItemTitle } from "../style/FormStyle";
+import { FormGroup, FormItemTitle } from "../../style/FormStyle";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import { BlockLayout } from "./style";
-import { useSwitch } from "../hooks/useSwitch";
+import { BlockLayout } from "../style";
+import { useSwitch } from "../../hooks/useSwitch";
+import { ConfigItem } from "./ConfigBlock";
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
 
-function SwitchBlock() {
+type Props = {
+  configs: ConfigItem[];
+};
+
+function SwitchBlock(props: Props) {
+  const { configs } = props;
   const [form] = Form.useForm();
   const { onValuesChange } = useSwitch(form);
 
@@ -29,10 +35,11 @@ function SwitchBlock() {
             <FormItemTitle>拦截配置</FormItemTitle>
             <FormItem name="target">
               <Select>
-                <Option value="test1-zcj">test1-zcj</Option>
-                <Option value="test1-xcj">test1-xcj</Option>
-                <Option value="show-zcj">show-zcj</Option>
-                <Option value="show-xcj">show-xcj</Option>
+                {configs.map((c) => (
+                  <Option key={c.key} value={c.key}>
+                    {c.title}
+                  </Option>
+                ))}
               </Select>
             </FormItem>
           </FormGroup>

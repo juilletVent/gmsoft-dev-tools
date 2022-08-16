@@ -8,11 +8,10 @@ import { useSwitch } from "../hooks/useSwitch";
 
 const { Item: FormItem } = Form;
 const { Option } = Select;
-interface Props {}
 
-function Popup(props: Props) {
+function Popup() {
   const [form] = Form.useForm();
-  const { onValuesChange } = useSwitch(form);
+  const { onValuesChange, configs } = useSwitch(form);
 
   return (
     <PopupLayout>
@@ -33,10 +32,11 @@ function Popup(props: Props) {
             <FormItemTitle>拦截配置</FormItemTitle>
             <FormItem name="target">
               <Select>
-                <Option value="test1-zcj">test1-zcj</Option>
-                <Option value="test1-xcj">test1-xcj</Option>
-                <Option value="show-zcj">show-zcj</Option>
-                <Option value="show-xcj">show-xcj</Option>
+                {configs.map((c) => (
+                  <Option key={c.key} value={c.key}>
+                    {c.title}
+                  </Option>
+                ))}
               </Select>
             </FormItem>
           </FormGroup>

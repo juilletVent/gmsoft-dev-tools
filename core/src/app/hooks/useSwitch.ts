@@ -1,13 +1,16 @@
 import { FormInstance } from "antd";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import MessageUtils from "../../utils/message";
 import { ExtensionsStorageUtils } from "../../utils/storage";
+import { ConfigItem } from "../Options/components/ConfigBlock";
 
 export function useSwitch(form: FormInstance<any>) {
+  const [configs, setConfig] = useState<ConfigItem[]>([]);
   const onValuesChange = useCallback((cvals: any, vals: any) => {
     ExtensionsStorageUtils.setConfig(vals);
-    chrome.runtime.sendMessage({
+    MessageUtils.sendMessage({
       type: "switch",
-      val: vals.open,
+      data: vals,
     });
   }, []);
 
@@ -15,10 +18,14 @@ export function useSwitch(form: FormInstance<any>) {
     if (form) {
       const { setFieldsValue } = form;
       ExtensionsStorageUtils.getConfig().then((config) => {
-        setFieldsValue(config);
+        setConfig(config.configs);
+        setFieldsValue({
+          target: config.target,
+          open: config.open ?? false,
+        });
       });
     }
   }, [form]);
 
-  return { onValuesChange };
+  return { onValuesChange, configs };
 }

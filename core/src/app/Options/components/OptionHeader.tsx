@@ -1,4 +1,3 @@
-import React from "react";
 import {
   HeaderLinks,
   Logo,
@@ -6,11 +5,11 @@ import {
   OptionHeaderLeft,
   OptionHeaderRight,
   Title,
-} from "./style";
-import logoImg from "../../imgs/cookie.png";
-import { useLinks } from "../hooks/useLinks";
-import authorImg from "../../imgs/author.jpeg";
-import githubImg from "../../imgs/Github.svg";
+} from "../style";
+import { useLinks } from "../../hooks/useLinks";
+import logoImg from "../../../imgs/cookie.png";
+import authorImg from "../../../imgs/author.jpeg";
+import githubImg from "../../../imgs/Github.svg";
 
 interface Props {}
 

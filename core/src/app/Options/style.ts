@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const OptionLayout = styled.div`
-  min-height: 100vh;
+  min-width: 1250px;
 `;
 
 const FlexBasic = styled.div`
@@ -12,11 +12,16 @@ const FlexBasic = styled.div`
 
 export const OptionHeaderLayout = styled.div`
   display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0px;
   padding: 16px;
   border-bottom: 1px solid #e9e9e9;
+  background: #fffefbfa;
+  box-shadow: 0 0 5px #f1f1f1;
 `;
 export const OptionHeaderLeft = styled(FlexBasic)`
   user-select: none;
@@ -71,14 +76,15 @@ export const BlockLayout = styled.div`
 
 export const ContentLayout = styled.div`
   position: relative;
-  width: 1000px;
-  margin: 20px auto;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
 `;
 
-const width = 280;
 export const NavLayout = styled.div`
-  position: absolute;
-  margin-left: -${width + 20}px;
-  width: ${width}px;
+  width: 280px;
 `;
-export const ConfigLayout = styled.div``;
+export const ConfigLayout = styled.div`
+  flex: none;
+  width: 900px;
+`;
