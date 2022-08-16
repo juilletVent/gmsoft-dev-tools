@@ -1,5 +1,5 @@
 interface Window {
   originalXMLHttpRequest: typeof XMLHttpRequest;
-  __getTargetCookie: (e: any) => void;
+  __getConfig: (e: any) => void;
   cookieConfig: any;
 }

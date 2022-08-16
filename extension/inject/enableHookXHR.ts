@@ -8,13 +8,14 @@ import MyXMLHttpRequest from "../utils/MyXMLHttpRequest";
   // Hook xhr
   window.XMLHttpRequest = MyXMLHttpRequest;
 
-  if (window.__getTargetCookie) {
-    document.removeEventListener("receiveCookie", window.__getTargetCookie);
+  if (window.__getConfig) {
+    document.removeEventListener("receiveConfig", window.__getConfig);
   }
-  window.__getTargetCookie = function (e) {
+  window.__getConfig = function (e) {
     window.cookieConfig = e.detail;
   };
-  document.addEventListener("receiveCookie", window.__getTargetCookie);
-  const event = new CustomEvent("requestCookie");
+  document.addEventListener("receiveConfig", window.__getConfig);
+
+  const event = new CustomEvent("requestConfig");
   document.dispatchEvent(event);
 })();

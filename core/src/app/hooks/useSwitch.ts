@@ -18,7 +18,7 @@ export function useSwitch(form: FormInstance<any>) {
     if (form) {
       const { setFieldsValue } = form;
       ExtensionsStorageUtils.getConfig().then((config) => {
-        setConfig(config.configs);
+        setConfig(config.configs || []);
         setFieldsValue({
           target: config.target,
           open: config.open ?? false,

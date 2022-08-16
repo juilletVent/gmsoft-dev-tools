@@ -1,4 +1,4 @@
-import { Form, Switch, Select } from "antd";
+import { Form, Switch, Select, Alert } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { PopupContentLayout, PopupLayout } from "./style";
 import PopupHeader from "./PopupHeader";
@@ -41,6 +41,7 @@ function Popup() {
             </FormItem>
           </FormGroup>
         </Form>
+        <Alert message="请先登录所选配置对应的环境，Cookie方可同步" />
       </PopupContentLayout>
       <PopupFooter />
     </PopupLayout>
