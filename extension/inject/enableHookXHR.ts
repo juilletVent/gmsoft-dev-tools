@@ -12,7 +12,8 @@ import MyXMLHttpRequest from "../utils/MyXMLHttpRequest";
     document.removeEventListener("receiveConfig", window.__getConfig);
   }
   window.__getConfig = function (e) {
-    window.cookieConfig = e.detail;
+    window.cookieConfig = e.detail.cookies;
+    window.rulesConfig = e.detail.config;
   };
   document.addEventListener("receiveConfig", window.__getConfig);
 

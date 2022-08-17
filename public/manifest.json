@@ -23,7 +23,7 @@
   "content_scripts": [
     {
       "all_frames": false,
-      "matches": ["*://*/*"],
+      "matches": ["*://localhost:*/*", "*://localhost/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     }

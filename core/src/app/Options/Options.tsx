@@ -24,6 +24,7 @@ interface Props {}
 // };
 
 function getConfigFile() {
+  let fileCancle = true;
   const input = document.createElement("input");
   input.type = "file";
   input.hidden = true;
@@ -31,7 +32,20 @@ function getConfigFile() {
 
   const result = new Promise<any>((res) => {
     input.click();
+    window.addEventListener(
+      "focus",
+      () => {
+        setTimeout(() => {
+          if (fileCancle) {
+            input.onchange = null;
+            document.body.removeChild(input);
+          }
+        }, 100);
+      },
+      { once: true }
+    );
     input.onchange = () => {
+      fileCancle = false;
       const file = get(input, "files[0]");
       if (file) {
         const reader = new FileReader();
@@ -68,10 +82,10 @@ function Options(props: Props) {
   }, [configs]);
   const onConfigDel = useCallback(
     (targetItem: ConfigItem) => {
-      if (configs.length <= 1) {
-        message.info("一条配置都没得，玩儿个锤子");
-        return;
-      }
+      // if (configs.length <= 1) {
+      //   message.info("一条配置都没得，玩儿个锤子");
+      //   return;
+      // }
       const newConfigs = configs.filter((item) => item.key !== targetItem.key);
       setConfigs(newConfigs);
       if (targetItem.key === currentConfig?.key) {

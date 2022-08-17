@@ -1,0 +1,26 @@
+[
+  {
+    "title": "show-zcj",
+    "cookiesPettern": ["Auth"],
+    "rules": [
+      {
+        "key": "item-1660648046294-6",
+        "domain": "www.gpwbeta.com",
+        "pattern": ["/gwebsite"]
+      }
+    ],
+    "key": "config-1660648046294"
+  },
+  {
+    "title": "show-xcj",
+    "cookiesPettern": ["Auth"],
+    "rules": [
+      {
+        "key": "item-1660648204907-1",
+        "domain": "www.cqzcjshow.com",
+        "pattern": ["/xcj-gateway"]
+      }
+    ],
+    "key": "config-1660648204907"
+  }
+]

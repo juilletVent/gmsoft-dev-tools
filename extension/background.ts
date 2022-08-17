@@ -26,19 +26,12 @@ function isGetCookieEventData(
 }
 
 function getCookie(name: string) {
-  return new Promise<chrome.cookies.Cookie[]>((resolve, reject) => {
-    chrome.cookies.getAll(
-      {
-        name,
-      },
-      (cookie) => {
-        if (cookie) {
-          resolve(cookie);
-        } else {
-          reject();
-        }
-      }
-    );
+  return new Promise<chrome.cookies.Cookie[]>((resolve) => {
+    chrome.cookies.getAll({}, (cookie) => {
+      const namePattern = new RegExp(name);
+      const cookies = cookie.filter((c) => namePattern.test(c.name));
+      resolve(cookies);
+    });
   });
 }
 
@@ -68,7 +61,6 @@ MessageUtils.addListener<MessagePayloadType, MessageResponsePayloadType>(
           .then(() => getCookie(cookieKey))
           .then(
             (cookie) => {
-              console.log("cookie: ", cookie);
               if (cookie) {
                 cookie.forEach((c) => {
                   if (data.domains.includes(c.domain)) {
@@ -82,7 +74,6 @@ MessageUtils.addListener<MessagePayloadType, MessageResponsePayloadType>(
       });
 
       chain.then(() => {
-        console.log("cookies: ", cookies);
         sendResponse({ type: "done", data: cookies });
       });
 

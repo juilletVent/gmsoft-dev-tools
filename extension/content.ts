@@ -53,10 +53,11 @@ import { ExtensionsStorageUtils } from "./utils/storage";
           },
         },
         (response) => {
-          console.log("response: ", response);
           const event = new CustomEvent("receiveConfig", {
-            // TODO 包装接口Cookie映射关系一并返回
-            detail: response.data,
+            detail: {
+              cookies: response.data,
+              config: currentConfig,
+            },
           });
           document.dispatchEvent(event);
         }

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ESNext",
     "noEmit": true,
     "moduleResolution": "node"
   },
-  "include": ["extension"],
+  "include": ["extension/**/*"],
   "exclude": ["node_modules"]
 }
