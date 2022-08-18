@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     background: './extension/background',
     content: './extension/content',
+    "content-login": './extension/content-login',
     enableHookXHR: './extension/inject/enableHookXHR',
     disableHookXHR: './extension/inject/disableHookXHR',
   },

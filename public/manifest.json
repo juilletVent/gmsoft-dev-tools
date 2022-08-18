@@ -26,6 +26,12 @@
       "matches": ["*://localhost:*/*", "*://localhost/*"],
       "js": ["content.js"],
       "run_at": "document_start"
+    },
+    {
+      "all_frames": true,
+      "matches": ["*://*/*"],
+      "js": ["content-login.js"],
+      "run_at": "document_idle"
     }
   ],
   "externally_connectable": {
@@ -34,7 +40,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["enableHookXHR.js", "disableHookXHR.js"],
+      "resources": ["enableHookXHR.js", "disableHookXHR.js", "config/*"],
       "matches": ["<all_urls>"]
     }
   ]

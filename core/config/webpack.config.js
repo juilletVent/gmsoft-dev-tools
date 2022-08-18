@@ -203,6 +203,7 @@ module.exports = function (webpackEnv) {
     entry: {
       options: paths.optionsJs,
       popup: paths.popupJs,
+      fillPwd: paths.fillPwdJs
     },
     output: {
       // The build folder.
@@ -212,11 +213,11 @@ module.exports = function (webpackEnv) {
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
       filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
+        ? 'static/js/[name].js'
         : isEnvDevelopment && 'static/js/[name].bundle.js',
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
+        ? 'static/js/[name].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
       assetModuleFilename: 'static/media/[name].[hash][ext]',
       // webpack uses `publicPath` to determine where the app is being served from.
@@ -602,6 +603,33 @@ module.exports = function (webpackEnv) {
             chunks: ["popup"],
             template: paths.appHtml,
             filename: "popup.html"
+          },
+          isEnvProduction
+            ? {
+              minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+            : undefined
+        )
+      ),
+      new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            inject: true,
+            chunks: ["fillPwd"],
+            template: paths.appHtml,
+            filename: "fillPwd.html"
           },
           isEnvProduction
             ? {
