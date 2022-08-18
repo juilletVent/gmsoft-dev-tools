@@ -18,7 +18,6 @@ const Layout = styled.div<{ isZCJ?: boolean }>`
 interface Props {}
 
 function FillPwd(props: Props) {
-  console.log("window.location.href", window.location.href);
   const isZCJ = useMemo(() => window.location.href.includes("ZCJ"), []);
 
   const containerRef = useRef<HTMLDivElement>(null);

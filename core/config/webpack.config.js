@@ -698,7 +698,6 @@ module.exports = function (webpackEnv) {
         fileName: 'asset-manifest.json',
         publicPath: paths.publicUrlOrPath,
         generate: (seed, files, entrypoints) => {
-          console.log('entrypoints: ', entrypoints);
           const manifestFiles = files.reduce((manifest, file) => {
             manifest[file.name] = file.path;
             return manifest;
