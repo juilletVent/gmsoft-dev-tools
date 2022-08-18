@@ -37,3 +37,12 @@ _Tips:为什么不发布到商店？没钱！开发者账号要一次性支付 5
 2. 替换页面原始 XHR 对象可以完成请求拦截
 
 基于上述两点原则，我们可以通过插件动态获取目标环境的 Cookie 并在开发环境下进行注入，即可完成开发环境盗用目标环境 Cookie 来完成身份验证。
+
+## 登录页面密码填充
+
+政采、行采登录：
+
+<div style="display:flex;gap:5px">
+   <img src="./doc/imgs/zcj-login.png"/>
+   <img src="./doc/imgs/xcj-login.png"/>
+</div>
