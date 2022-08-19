@@ -65,13 +65,6 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     return super.open(...args);
   }
 
-  abort() {
-    super.abort();
-    this.manager.clearCookie();
-    this.manager.clearId();
-    this.manager.sendRecover();
-  }
-
   /**
    * 关于send方法：此方法会将所有接口串行化，保证Cookie的正确性
    * 每个接口调用在初始化时创建了一个唯一标识requestId，接口调用开始时，会将此ID push到window.__myxhrsending
@@ -81,7 +74,7 @@ class MyXMLHttpRequest extends XMLHttpRequest {
    */
   send(body: any) {
     // 请求结束后，清空本轮注入的Cookie，清理请求ID队列，发送recoverSend事件
-    const loadendCallback = () => {
+    const finishCallback = () => {
       this.manager.clearCookie();
       this.manager.clearId();
       this.manager.sendRecover();
@@ -93,7 +86,7 @@ class MyXMLHttpRequest extends XMLHttpRequest {
       const recoverCallback = () => {
         if (window.__myxhrsending[0] === this.manager.requestId) {
           this.manager.injectCookie();
-          this.addEventListener("loadend", loadendCallback);
+          this.addEventListener("loadend", finishCallback);
           window.removeEventListener("recoverSend", recoverCallback);
           super.send(body);
         }
@@ -106,7 +99,7 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     window.__myxhrsending = window.__myxhrsending || [];
     window.__myxhrsending.push(this.manager.requestId);
     this.manager.injectCookie();
-    this.addEventListener("loadend", loadendCallback);
+    this.addEventListener("loadend", finishCallback);
     return super.send(body);
   }
 }
@@ -119,6 +112,11 @@ function myFetch(
   init?: RequestInit
 ): Promise<Response> {
   const requestManager = new RequestManager();
+  const finishCallback = () => {
+    requestManager.clearCookie();
+    requestManager.clearId();
+    requestManager.sendRecover();
+  };
   requestManager.prepareCookie(input.toString());
 
   const process = new Promise<void>((resolve) => {
@@ -147,12 +145,16 @@ function myFetch(
     resolve();
   })
     .then(() => window.originalFetch(input, init))
-    .then((response) => {
-      requestManager.clearCookie();
-      requestManager.clearId();
-      requestManager.sendRecover();
-      return response;
-    });
+    .then(
+      (response) => {
+        finishCallback();
+        return response;
+      },
+      (err) => {
+        finishCallback();
+        throw err;
+      }
+    );
   return process;
 }
 

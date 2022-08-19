@@ -10,7 +10,8 @@
     "postbuild": "npm --prefix=./core run build",
     "build-core": "npm --prefix=./core run build",
     "start-core": "yarn --cwd=./core start",
-    "build-extension": "cross-env NODE_ENV=production webpack"
+    "build-extension": "cross-env NODE_ENV=production webpack",
+    "pub-patch": "npm version patch"
   },
   "keywords": [],
   "author": "xhmm",
