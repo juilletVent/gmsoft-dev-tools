@@ -11,14 +11,14 @@ import { ExtensionsStorageUtils } from "./utils/storage";
   function enableApiHooks() {
     const injectScript = document.createElement("script");
     injectScript.dataset.enableApiHooks = "true";
-    injectScript.src = chrome.runtime.getURL("enableHookXHR.js");
+    injectScript.src = chrome.runtime.getURL("enableHTTPHook.js");
     document.documentElement.appendChild(injectScript);
     removeNode("script[data-disable-api-hooks]");
   }
   function disableApiHooks() {
     const injectScript = document.createElement("script");
     injectScript.dataset.disableApiHooks = "true";
-    injectScript.src = chrome.runtime.getURL("disableHookXHR.js");
+    injectScript.src = chrome.runtime.getURL("disableHTTPHook.js");
     document.documentElement.appendChild(injectScript);
     removeNode("script[data-enable-api-hooks]");
   }

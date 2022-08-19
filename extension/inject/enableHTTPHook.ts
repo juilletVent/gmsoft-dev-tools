@@ -1,4 +1,4 @@
-import MyXMLHttpRequest from "../utils/MyXMLHttpRequest";
+import { MyXMLHttpRequest, myFetch } from "../utils/MyRequest";
 
 (() => {
   if (!window.originalXMLHttpRequest) {
@@ -7,6 +7,12 @@ import MyXMLHttpRequest from "../utils/MyXMLHttpRequest";
   }
   // Hook xhr
   window.XMLHttpRequest = MyXMLHttpRequest;
+  if (!window.originalFetch) {
+    // 保存原始对象
+    window.originalFetch = window.fetch;
+  }
+  // Hook fetch
+  window.fetch = myFetch;
 
   if (window.__getConfig) {
     document.removeEventListener("receiveConfig", window.__getConfig);
