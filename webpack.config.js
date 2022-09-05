@@ -5,6 +5,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
+  devtool: process.env.SOURCE_MAP ? 'inline-source-map' : false,
   entry: {
     background: './extension/background',
     content: './extension/content',

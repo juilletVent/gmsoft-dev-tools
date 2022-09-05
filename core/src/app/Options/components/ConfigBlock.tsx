@@ -131,7 +131,11 @@ function ConfigBlock(props: Props) {
   const onSave = useCallback(() => {
     form.validateFields().then(
       (vals) => {
-        onConfigSave({ ...vals, key: config?.key });
+        onConfigSave({
+          ...vals,
+          cookiesPettern: vals.cookiesPettern.map((i: string) => i.trim()),
+          key: config?.key,
+        });
       },
       () => {}
     );

@@ -126,8 +126,8 @@ function Options(props: Props) {
       mapKeys(configVals.rules, (v, k) => {
         rules.push({
           key: k,
-          domain: v.domain,
-          pattern: v.pattern,
+          domain: v.domain.trim(),
+          pattern: v.pattern.map((i: string) => i.trim()),
         });
       });
       const newConfig: ConfigItem = {
