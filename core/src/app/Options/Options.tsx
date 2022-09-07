@@ -8,8 +8,6 @@ import { message } from "antd";
 import { get, mapKeys, uniqueId } from "lodash";
 import { ExtensionsStorageUtils } from "../../utils/storage";
 
-interface Props {}
-
 // const defaultConfig: ConfigItem = {
 //   key: "config-default",
 //   title: "Default",
@@ -61,7 +59,7 @@ function getConfigFile() {
   return result;
 }
 
-function Options(props: Props) {
+function Options() {
   const [configs, setConfigs] = useState<ConfigItem[]>([]);
   const [currentConfig, setCurrentConfig] = useState<ConfigItem>();
   const onConfigAdd = useCallback(() => {
@@ -74,6 +72,7 @@ function Options(props: Props) {
           key: `item-${Date.now()}-${uniqueId()}`,
           domain: "",
           pattern: [],
+          replaceParams: [],
         },
       ],
     };
@@ -127,7 +126,8 @@ function Options(props: Props) {
         rules.push({
           key: k,
           domain: v.domain.trim(),
-          pattern: v.pattern.map((i: string) => i.trim()),
+          pattern: (v.pattern || []).map((i: string) => i.trim()),
+          replaceParams: (v.replaceParams || []).map((i: string) => i.trim()),
         });
       });
       const newConfig: ConfigItem = {

@@ -49,6 +49,44 @@ class RequestManager {
     const event = new CustomEvent("recoverSend");
     window.dispatchEvent(event);
   }
+
+  replaceParams(url: string) {
+    const [path, originalSearchStr] = url.split("?");
+    const matchRules = get(window, "rulesConfig.rules", []).filter((rule) => {
+      let match = false;
+      (rule.pattern || []).forEach((pattern) => {
+        if (url.includes(pattern)) {
+          match = true;
+        }
+      });
+      return match;
+    });
+    // 目标替换规则
+    const targetReplaceRules = get(matchRules, "[0].replaceParams", []);
+    if (originalSearchStr) {
+      let tempSearchStr = originalSearchStr;
+      targetReplaceRules.forEach((replaceRule) => {
+        const [patternRegexStr, valStr] = replaceRule.split("#$$#");
+        try {
+          if (patternRegexStr && valStr) {
+            tempSearchStr = tempSearchStr.replace(
+              new RegExp(patternRegexStr),
+              valStr
+            );
+          }
+        } catch (error) {
+          // 异常静默失败，直接跳过
+          console.warn(
+            "Config for params replace is invalid, patternRegexStr: %s,valStr: %s",
+            patternRegexStr,
+            valStr
+          );
+        }
+      });
+      return `${path}?${tempSearchStr}`;
+    }
+    return path;
+  }
 }
 
 class MyXMLHttpRequest extends XMLHttpRequest {
@@ -61,6 +99,7 @@ class MyXMLHttpRequest extends XMLHttpRequest {
 
   open(...args: any[]) {
     this.manager.prepareCookie(args[1]);
+    args[1] = this.manager.replaceParams(args[1]);
     // @ts-ignore
     return super.open(...args);
   }
@@ -111,6 +150,7 @@ function myFetch(
   input: URL | RequestInfo,
   init?: RequestInit
 ): Promise<Response> {
+  console.log("input: ", input);
   const requestManager = new RequestManager();
   const finishCallback = () => {
     requestManager.clearCookie();

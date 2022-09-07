@@ -1,4 +1,4 @@
-import { Card, Form, Button, Input, List, Empty, message } from "antd";
+import { Card, Form, Button, Input, List, Empty, message, Alert } from "antd";
 import { CheckOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import FormItem from "antd/es/form/FormItem";
 import { useCallback, useEffect, useState } from "react";
@@ -38,6 +38,8 @@ export type RuleItem = {
   domain: string;
   /** 接口匹配模式组 */
   pattern: string[];
+  /** 参数替换模式组，使用$$分隔匹配模式换替换值，前者为匹配模式，后者为替换值 */
+  replaceParams: string[];
 };
 
 export type ConfigItem = {
@@ -98,6 +100,19 @@ function renderItem<T extends RuleItem>(item: T, onDel: (item: T) => void) {
         >
           <Tags />
         </FormItem>
+        <FormItem
+          label="参数替换"
+          name={["rules", item.key, "replaceParams"]}
+          initialValue={item.replaceParams}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "空起咩？？？",
+          //   },
+          // ]}
+        >
+          <Tags />
+        </FormItem>
       </RuleLayout>
     </List.Item>
   );
@@ -115,7 +130,12 @@ function ConfigBlock(props: Props) {
   const onRuleAdd = useCallback(() => {
     setRules([
       ...rules,
-      { key: `item-${Date.now()}-${uniqueId()}`, domain: "", pattern: [] },
+      {
+        key: `item-${Date.now()}-${uniqueId()}`,
+        domain: "",
+        pattern: [],
+        replaceParams: [],
+      },
     ]);
   }, [rules]);
   const onRuleDel = useCallback(
@@ -216,6 +236,22 @@ function ConfigBlock(props: Props) {
               renderItem={(item) => renderItem(item, onRuleDel)}
             />
           </Form>
+          <Alert
+            showIcon
+            type="info"
+            message="配置样例"
+            description={
+              <>
+                <p>Cookie Key（匹配逻辑为正则表达式）：Auth</p>
+                <p>
+                  目标接口（匹配逻辑为includes判定，非正则表达式）：/xcj-gateway
+                </p>
+                <p>
+                  参数替换（使用#$$#分隔匹配模式与替换值）：localhost(:\d+)#$$#www.xcjtest1.gm
+                </p>
+              </>
+            }
+          />
           <BtnGroup>
             <Button onClick={onRuleAdd} icon={<PlusOutlined />} type="dashed">
               添加域名配置
