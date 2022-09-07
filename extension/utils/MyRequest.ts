@@ -150,7 +150,6 @@ function myFetch(
   input: URL | RequestInfo,
   init?: RequestInit
 ): Promise<Response> {
-  console.log("input: ", input);
   const requestManager = new RequestManager();
   const finishCallback = () => {
     requestManager.clearCookie();
@@ -158,7 +157,6 @@ function myFetch(
     requestManager.sendRecover();
   };
   requestManager.prepareCookie(input.toString());
-
   const process = new Promise<void>((resolve) => {
     if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
       window.__myxhrsending.push(requestManager.requestId);
@@ -184,7 +182,9 @@ function myFetch(
     requestManager.injectCookie();
     resolve();
   })
-    .then(() => window.originalFetch(input, init))
+    .then(() =>
+      window.originalFetch(requestManager.replaceParams(input.toString()), init)
+    )
     .then(
       (response) => {
         finishCallback();
