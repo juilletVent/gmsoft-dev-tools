@@ -69,8 +69,8 @@ class RequestManager {
         const [patternRegexStr, valStr] = replaceRule.split("#$$#");
         try {
           if (patternRegexStr && valStr) {
-            tempSearchStr = tempSearchStr.replaceAll(
-              new RegExp(patternRegexStr),
+            tempSearchStr = tempSearchStr.replace(
+              new RegExp(patternRegexStr, "g"),
               valStr
             );
           }

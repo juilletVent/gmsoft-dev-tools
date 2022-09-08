@@ -270,7 +270,7 @@ function ConfigBlock(props: Props) {
                   </li>
                   <li>
                     参数替换（使用&nbsp;<strong>#$$#</strong>
-                    &nbsp;分隔匹配模式与替换值），请格外注意想要匹配的目标值是否存在URL转码或者转义：
+                    &nbsp;分隔匹配模式与替换值），匹配模式为正则，并且认定为全局匹配（带有g标志位），请格外注意想要匹配的目标值是否存在URL转码或者转义：
                     <ol>
                       <li>
                         <span className="code">name(?=Other)#$$#title</span>
