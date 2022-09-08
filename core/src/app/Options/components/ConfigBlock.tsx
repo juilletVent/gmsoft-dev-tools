@@ -21,6 +21,22 @@ const ConfigBlockLayout = styled.div`
     padding-top: 30px;
     border-top: 1px dashed #e9e9e9;
   }
+  .desc ul {
+    padding-left: 0;
+  }
+  ol li {
+    margin: 5px 0;
+  }
+  .ant-alert {
+    margin-bottom: 20px;
+  }
+  .code {
+    display: inline-block;
+    padding: 1px 8px;
+    background: #f9f9f9;
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+  }
 `;
 const RuleLayout = styled.div`
   display: flex;
@@ -238,22 +254,43 @@ function ConfigBlock(props: Props) {
           </Form>
           <Alert
             showIcon
+            closable
             type="info"
             message="配置样例"
             description={
-              <>
-                <p>Cookie Key（匹配逻辑为正则表达式）：Auth</p>
-                <p>
-                  目标接口（匹配逻辑为includes判定，非正则表达式）：/xcj-gateway
-                </p>
-                <p>
-                  参数替换（使用#$$#分隔匹配模式与替换值）：localhost(:\d+)#$$#www.xcjtest1.gm
-                </p>
-              </>
+              <div className="desc">
+                <ul>
+                  <li>
+                    Cookie Key（匹配逻辑为正则表达式）：
+                    <span className="code">Auth</span>
+                  </li>
+                  <li>
+                    目标接口（匹配逻辑为includes判定，非正则表达式）：
+                    <span className="code">/xcj-gateway</span>
+                  </li>
+                  <li>
+                    参数替换（使用&nbsp;<strong>#$$#</strong>
+                    &nbsp;分隔匹配模式与替换值），请格外注意想要匹配的目标值是否存在URL转码或者转义：
+                    <ol>
+                      <li>
+                        <span className="code">name(?=Other)#$$#title</span>
+                      </li>
+                      <li>
+                        <span className="code">
+                          localhost((:|%3A)\d+)?#$$#www.cqzcjshow.com
+                        </span>
+                      </li>
+                      <li>
+                        <span className="code">aaaaa#$$#bbbbb</span>
+                      </li>
+                    </ol>
+                  </li>
+                </ul>
+              </div>
             }
           />
           <BtnGroup>
-            <Button onClick={onRuleAdd} icon={<PlusOutlined />} type="dashed">
+            <Button onClick={onRuleAdd} icon={<PlusOutlined />}>
               添加域名配置
             </Button>
             <Button onClick={onSave} type="primary" icon={<CheckOutlined />}>
