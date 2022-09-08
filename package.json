@@ -1,6 +1,6 @@
 {
   "name": "gmsoft-dev-tools",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "大家软件前端开发工具",
   "main": "index.js",
   "scripts": {
