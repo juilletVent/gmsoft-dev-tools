@@ -85,6 +85,20 @@ function renderItem<T extends RuleItem>(item: T, onDel: (item: T) => void) {
     >
       <RuleLayout>
         <FormItem
+          label="目标接口"
+          name={["rules", item.key, "pattern"]}
+          requiredMark
+          initialValue={item.pattern}
+          rules={[
+            {
+              required: true,
+              message: "空起咩？？？",
+            },
+          ]}
+        >
+          <Tags />
+        </FormItem>
+        <FormItem
           label="目标域名"
           name={["rules", item.key, "domain"]}
           requiredMark
@@ -101,20 +115,6 @@ function renderItem<T extends RuleItem>(item: T, onDel: (item: T) => void) {
           ]}
         >
           <Input placeholder="请输入目标域名" allowClear />
-        </FormItem>
-        <FormItem
-          label="目标接口"
-          name={["rules", item.key, "pattern"]}
-          requiredMark
-          initialValue={item.pattern}
-          rules={[
-            {
-              required: true,
-              message: "空起咩？？？",
-            },
-          ]}
-        >
-          <Tags />
         </FormItem>
         <FormItem
           label="参数替换"
