@@ -128,6 +128,10 @@ class MyXMLHttpRequest extends XMLHttpRequest {
           this.addEventListener("loadend", finishCallback);
           window.removeEventListener("recoverSend", recoverCallback);
           super.send(body);
+          // 如果发现没有loadend事件，则立即调用后续流程，原因不明，有可能某些程序对XHR实例进行了定制
+          if (!this.onloadend) {
+            finishCallback();
+          }
         }
       };
       window.addEventListener("recoverSend", recoverCallback);
@@ -139,6 +143,10 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     window.__myxhrsending.push(this.manager.requestId);
     this.manager.injectCookie();
     this.addEventListener("loadend", finishCallback);
+    // 如果发现没有loadend事件，则立即调用后续流程，原因不明，有可能某些程序对XHR实例进行了定制
+    if (!this.onloadend) {
+      finishCallback();
+    }
     return super.send(body);
   }
 }
@@ -160,7 +168,7 @@ function myFetch(
   const process = new Promise<void>((resolve) => {
     if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
       window.__myxhrsending.push(requestManager.requestId);
-      if (init.signal) {
+      if (init && init.signal) {
         init.signal.addEventListener("abort", () => {
           window.__myxhrsending = window.__myxhrsending.filter(
             (i) => i !== requestManager.requestId

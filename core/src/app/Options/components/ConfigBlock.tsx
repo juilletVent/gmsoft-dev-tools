@@ -44,8 +44,8 @@ const RuleLayout = styled.div`
   flex: auto;
 `;
 const layout = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 20 },
+  labelCol: { span: 4 },
+  wrapperCol: { span: 19 },
 };
 
 export type RuleItem = {
@@ -99,7 +99,7 @@ function renderItem<T extends RuleItem>(item: T, onDel: (item: T) => void) {
           <Tags />
         </FormItem>
         <FormItem
-          label="目标域名"
+          label="从此域窃取Cookie"
           name={["rules", item.key, "domain"]}
           requiredMark
           initialValue={item.domain}

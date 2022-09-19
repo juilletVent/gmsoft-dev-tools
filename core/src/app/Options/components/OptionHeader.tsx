@@ -34,7 +34,7 @@ function OptionHeader(props: Props) {
             onClick={onAuthorInfoOpen}
             src={authorImg}
             alt="author"
-            title="Github作者地址"
+            title="Vme50"
           />
         </HeaderLinks>
       </OptionHeaderRight>
