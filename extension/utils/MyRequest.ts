@@ -4,10 +4,12 @@ import { get, isEmpty, uniqueId } from "lodash";
 class RequestManager {
   requestId: string;
   targetCookies: chrome.cookies.Cookie[];
+  finished: boolean;
 
   constructor() {
     this.requestId = `${Date.now()}${uniqueId()}`;
     this.targetCookies = [];
+    this.finished = false;
   }
 
   prepareCookie(url: string) {
@@ -48,6 +50,17 @@ class RequestManager {
     // 触发后续接口调用
     const event = new CustomEvent("recoverSend");
     window.dispatchEvent(event);
+  }
+  done() {
+    if (!this.finished) {
+      this.clearCookie();
+      this.clearId();
+      this.sendRecover();
+      this.finished = true;
+    }
+  }
+  startCountDown() {
+    setTimeout(this.done.bind(this), 3000);
   }
 
   replaceParams(url: string) {
@@ -113,11 +126,7 @@ class MyXMLHttpRequest extends XMLHttpRequest {
    */
   send(body: any) {
     // 请求结束后，清空本轮注入的Cookie，清理请求ID队列，发送recoverSend事件
-    const finishCallback = () => {
-      this.manager.clearCookie();
-      this.manager.clearId();
-      this.manager.sendRecover();
-    };
+    const finishCallback = () => this.manager.done();
 
     // 如果当前请求ID队列不为空，则暂缓执行，并将当前请求ID推入请求ID队列，并注册recoverSend事件
     if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
@@ -125,13 +134,13 @@ class MyXMLHttpRequest extends XMLHttpRequest {
       const recoverCallback = () => {
         if (window.__myxhrsending[0] === this.manager.requestId) {
           this.manager.injectCookie();
+          // 启动超时定时器，如果未能在3000ms内得到响应，则不再等待，启动后续流程
+          this.manager.startCountDown();
+          // 订阅请求完成，完成后启动后续调用流程
           this.addEventListener("loadend", finishCallback);
+          // 移除自定义事件监听，已经触发了后续流程，当前事件处理程序已经完成他的使命了
           window.removeEventListener("recoverSend", recoverCallback);
           super.send(body);
-          // 如果发现没有loadend事件，则立即调用后续流程，原因不明，有可能某些程序对XHR实例进行了定制
-          if (!this.onloadend) {
-            finishCallback();
-          }
         }
       };
       window.addEventListener("recoverSend", recoverCallback);
@@ -142,11 +151,8 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     window.__myxhrsending = window.__myxhrsending || [];
     window.__myxhrsending.push(this.manager.requestId);
     this.manager.injectCookie();
+    this.manager.startCountDown();
     this.addEventListener("loadend", finishCallback);
-    // 如果发现没有loadend事件，则立即调用后续流程，原因不明，有可能某些程序对XHR实例进行了定制
-    if (!this.onloadend) {
-      finishCallback();
-    }
     return super.send(body);
   }
 }
@@ -159,11 +165,7 @@ function myFetch(
   init?: RequestInit
 ): Promise<Response> {
   const requestManager = new RequestManager();
-  const finishCallback = () => {
-    requestManager.clearCookie();
-    requestManager.clearId();
-    requestManager.sendRecover();
-  };
+  const finishCallback = () => requestManager.done();
   requestManager.prepareCookie(input.toString());
   const process = new Promise<void>((resolve) => {
     if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
