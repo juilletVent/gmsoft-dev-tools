@@ -23,7 +23,7 @@
   "content_scripts": [
     {
       "all_frames": false,
-      "matches": ["*://localhost:*/*", "*://localhost/*"],
+      "matches": ["*://localhost/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     },
@@ -36,12 +36,13 @@
   ],
   "externally_connectable": {
     "ids": ["*"],
-    "matches": ["*://localhost:*/*", "*://localhost/*"]
+    "matches": ["*://localhost/*"]
   },
   "web_accessible_resources": [
     {
       "resources": ["enableHTTPHook.js", "disableHTTPHook.js", "config/*"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "homepage_url": "https://github.com/juilletVent/gmsoft-dev-tools"
 }
