@@ -38,6 +38,34 @@ _Tips:为什么不发布到商店？没钱！开发者账号要一次性支付 5
 
 基于上述两点原则，我们可以通过插件动态获取目标环境的 Cookie 并在开发环境下进行注入，即可完成开发环境盗用目标环境 Cookie 来完成身份验证。
 
+## 不兼容的特性/问题
+
+1. 同步请求：由于Cookie设置问题，插件会强制将同步请求异步化，因此对于同步请求，插件实际是不支持的，请特别注意；典型案例代码：
+
+~~~js
+this.getAudit = function (id) {
+   var dataBuffer = null;
+   $.ajax({
+     url: preAnnouncementApi.replace(':areaId', id).replace(':key', 'isAudit'),
+     type: 'get',
+     async: false, //同步
+     xhrFields: {
+       withCredentials: true,
+     },
+     error: function (XMLHttpRequest) {
+       dataBuffer = { value: undefined };
+     },
+     success: function (data) {
+       dataBuffer = data;
+     },
+   });
+   return new Promise(function (res, rej) {
+     // 开启插件后，此处永远不可能获取到值，因为插件将请求转为了异步请求，请特别小心
+     res(dataBuffer);
+   });
+};
+~~~
+
 ## 登录页面密码填充
 
 政采、行采登录：
