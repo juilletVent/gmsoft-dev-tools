@@ -28,6 +28,12 @@ class ExtensionsStorageUtils {
         });
       });
   }
+
+  static getLocalConfig() {
+    return JSON.parse(
+      window.localStorage.getItem("gmsoft-dev-tools-local-config") || "{}"
+    );
+  }
 }
 
 export { ExtensionsStorageUtils };
