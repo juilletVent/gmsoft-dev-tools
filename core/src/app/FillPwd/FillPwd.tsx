@@ -43,14 +43,6 @@ function FillPwd(props: Props) {
             label: "123456",
             key: "123456",
           },
-          {
-            label: "GmsoftTest_1997",
-            key: "GmsoftTest_1997",
-          },
-          {
-            label: "Gmsoft1997",
-            key: "Gmsoft1997",
-          },
         ]}
       />
     ),
