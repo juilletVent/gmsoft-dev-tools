@@ -32,9 +32,40 @@ class RequestManager {
 
   injectCookie() {
     this.targetCookies.map((cookie) => {
+      // Auth是特殊Cookie，不需要注入，使用Header的方式注入
+      if (cookie.name === "Auth") {
+        return;
+      }
       Cookies.set(cookie.name, cookie.value);
     });
   }
+
+  injectAuthHeader(xhr: RequestInit): RequestInit;
+  injectAuthHeader(xhr: MyXMLHttpRequest): void;
+  injectAuthHeader(xhr: MyXMLHttpRequest | RequestInit): RequestInit {
+    // XHR对象和fetch对象的Header设置方式不同，分别处理
+    if (xhr instanceof MyXMLHttpRequest) {
+      for (const cookie of this.targetCookies) {
+        if (cookie.name === "Auth") {
+          xhr.setRequestHeader("Authorization", `Auth ${cookie.value}`);
+          break;
+        }
+      }
+      return;
+    }
+
+    const initObj = xhr as RequestInit;
+    const headers = initObj.headers || {};
+    for (const cookie of this.targetCookies) {
+      if (cookie.name === "Auth") {
+        headers["Authorization"] = `Auth ${cookie.value}`;
+        break;
+      }
+    }
+    initObj.headers = headers;
+    return initObj;
+  }
+
   clearCookie() {
     // 移除注入的Cookie
     this.targetCookies.map((cookie) => {
@@ -114,7 +145,10 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     this.manager.prepareCookie(args[1]);
     args[1] = this.manager.replaceParams(args[1]);
     // @ts-ignore
-    return super.open(...args);
+    const result = super.open(...args);
+    // 设置Header，setRequestHeader必须在open之后，send之前调用，因此插入在此位置
+    this.manager.injectAuthHeader(this);
+    return result;
   }
 
   /**
@@ -170,13 +204,6 @@ function myFetch(
   const process = new Promise<void>((resolve) => {
     if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
       window.__myxhrsending.push(requestManager.requestId);
-      if (init && init.signal) {
-        init.signal.addEventListener("abort", () => {
-          window.__myxhrsending = window.__myxhrsending.filter(
-            (i) => i !== requestManager.requestId
-          );
-        });
-      }
       const recoverCallback = () => {
         if (window.__myxhrsending[0] === requestManager.requestId) {
           requestManager.injectCookie();
@@ -184,6 +211,16 @@ function myFetch(
           resolve();
         }
       };
+
+      if (init && init.signal) {
+        init.signal.addEventListener("abort", () => {
+          window.__myxhrsending = window.__myxhrsending.filter(
+            (i) => i !== requestManager.requestId
+          );
+          window.removeEventListener("recoverSend", recoverCallback);
+        });
+      }
+
       window.addEventListener("recoverSend", recoverCallback);
       return;
     }
@@ -192,9 +229,13 @@ function myFetch(
     requestManager.injectCookie();
     resolve();
   })
-    .then(() =>
-      window.originalFetch(requestManager.replaceParams(input.toString()), init)
-    )
+    .then(() => {
+      const finalInit = requestManager.injectAuthHeader(init);
+      return window.originalFetch(
+        requestManager.replaceParams(input.toString()),
+        finalInit
+      );
+    })
     .then(
       (response) => {
         finishCallback();
