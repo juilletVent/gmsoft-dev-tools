@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Menu, Dropdown, Button, Space } from "antd";
 import styled from "styled-components";
 import { DownOutlined } from "@ant-design/icons";
@@ -19,7 +19,7 @@ interface Props {}
 
 function FillPwd(props: Props) {
   const isZCJ = useMemo(() => window.location.href.includes("ZCJ"), []);
-
+  const [pwds, setPwds] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const onPwdChange = useCallback(({ key }: any) => {
     const passwordNode = document.querySelector(
@@ -33,20 +33,22 @@ function FillPwd(props: Props) {
     }
   }, []);
 
+  const items = useMemo(
+    () => pwds.map((pwd) => ({ key: pwd, label: pwd })),
+    [pwds]
+  );
+
+  useEffect(() => {
+    document.addEventListener("receivePwd", (e: any) => {
+      setPwds(e.detail.pwdList);
+    });
+    const event = new CustomEvent("requestPwd");
+    document.dispatchEvent(event);
+  }, []);
+
   const menu = useMemo(
-    () => (
-      <Menu
-        style={{ width: 150 }}
-        onClick={onPwdChange}
-        items={[
-          {
-            label: "123456",
-            key: "123456",
-          },
-        ]}
-      />
-    ),
-    [onPwdChange]
+    () => <Menu style={{ width: 150 }} onClick={onPwdChange} items={items} />,
+    [items, onPwdChange]
   );
 
   return (

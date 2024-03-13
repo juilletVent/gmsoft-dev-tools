@@ -7,6 +7,7 @@ import ConfigBlock, { ConfigItem, RuleItem } from "./components/ConfigBlock";
 import { message } from "antd";
 import { get, mapKeys, uniqueId } from "lodash";
 import { ExtensionsStorageUtils } from "../../utils/storage";
+import PasswordConfigBlock from "./components/PasswordConfigBlock";
 
 // const defaultConfig: ConfigItem = {
 //   key: "config-default",
@@ -173,6 +174,7 @@ function Options() {
             onConfigImport={onConfigImport}
             onConfigExport={onConfigExport}
           />
+          <PasswordConfigBlock />
         </NavLayout>
         <ConfigLayout>
           <ConfigBlock config={currentConfig} onConfigSave={onConfigSave} />
