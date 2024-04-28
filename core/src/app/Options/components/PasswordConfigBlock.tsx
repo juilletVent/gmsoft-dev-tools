@@ -3,6 +3,7 @@ import { FormGroup, FormItemTitle } from "../../style/FormStyle";
 import { BlockLayout } from "../style";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { ExtensionsStorageUtils } from "../../../utils/storage";
+import { toastSucc } from "../../../components/popup";
 
 const { Item: FormItem } = Form;
 
@@ -21,6 +22,7 @@ function PasswordConfigBlock() {
             return nList;
           });
           form.setFieldsValue({ target: "" });
+          toastSucc("添加成功");
         }
       }
     },
@@ -31,6 +33,7 @@ function PasswordConfigBlock() {
     setPwdList((list) => {
       const nList = list.filter((p) => p !== pwd);
       ExtensionsStorageUtils.setConfig({ pwdList: nList });
+      toastSucc("删除成功");
       return nList;
     });
   }, []);
@@ -57,8 +60,13 @@ function PasswordConfigBlock() {
             <List.Item
               key={pwd}
               extra={
-                <Button type="link" size="small" onClick={() => onPwdDel(pwd)}>
-                  删除
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => onPwdDel(pwd)}
+                  title="删除"
+                >
+                  ❌
                 </Button>
               }
             >

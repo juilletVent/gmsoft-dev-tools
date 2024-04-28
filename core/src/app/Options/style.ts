@@ -1,7 +1,14 @@
 import styled from "styled-components";
+import optBg from "../../imgs/opt-bg.png";
 
 export const OptionLayout = styled.div`
   min-width: 1250px;
+  background: url(${optBg});
+  background-attachment: fixed;
+  .ant-card {
+    background: #ffffff3f;
+    backdrop-filter: blur(10px);
+  }
 `;
 
 const FlexBasic = styled.div`
@@ -72,6 +79,17 @@ export const BlockLayout = styled.div`
       padding: 0;
     }
   }
+  .item-active {
+    position: relative;
+    &::before {
+      content: "🚩";
+      position: absolute;
+      display: block;
+      left: -20px;
+      top: 0px;
+      font-size: 22px;
+    }
+  }
 `;
 
 export const ContentLayout = styled.div`
@@ -82,7 +100,7 @@ export const ContentLayout = styled.div`
 `;
 
 export const NavLayout = styled.div`
-  width: 280px;
+  width: 300px;
 `;
 export const ConfigLayout = styled.div`
   flex: none;

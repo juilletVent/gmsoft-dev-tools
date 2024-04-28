@@ -19,7 +19,7 @@ function SwitchBlock(props: Props) {
 
   return (
     <BlockLayout>
-      <Card title="功能管理">
+      <Card title="🛠 功能管理">
         <Form name="popup" form={form} onValuesChange={onValuesChange}>
           <FormGroup>
             <FormItemTitle>拦截开关</FormItemTitle>

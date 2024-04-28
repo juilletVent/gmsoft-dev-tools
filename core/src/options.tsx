@@ -13,6 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ConfigProvider locale={zhCN}>
+      {/* http://localhost:8000/config/options.html */}
       <Options />
     </ConfigProvider>
   </React.StrictMode>

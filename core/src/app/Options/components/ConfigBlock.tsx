@@ -201,7 +201,7 @@ function ConfigBlock(props: Props) {
     return (
       <BlockLayout>
         <ConfigBlockLayout>
-          <Card title="配置明细">
+          <Card title="📄 配置明细">
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
           </Card>
         </ConfigBlockLayout>
@@ -212,7 +212,7 @@ function ConfigBlock(props: Props) {
   return (
     <BlockLayout>
       <ConfigBlockLayout>
-        <Card title="配置明细">
+        <Card title="📄 配置明细">
           <Form name="popup" form={form} {...layout}>
             <FormItem
               label="标题"

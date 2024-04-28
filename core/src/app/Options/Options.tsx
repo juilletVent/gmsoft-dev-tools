@@ -5,9 +5,10 @@ import SwitchBlock from "./components/SwitchBlock";
 import ConfigNavBlock from "./components/ConfigNavBlock";
 import ConfigBlock, { ConfigItem, RuleItem } from "./components/ConfigBlock";
 import { message } from "antd";
-import { get, mapKeys, uniqueId } from "lodash";
+import { cloneDeep, get, mapKeys, uniqueId } from "lodash";
 import { ExtensionsStorageUtils } from "../../utils/storage";
 import PasswordConfigBlock from "./components/PasswordConfigBlock";
+import { alertError, toastSucc } from "../../components/popup";
 
 // const defaultConfig: ConfigItem = {
 //   key: "config-default",
@@ -79,7 +80,27 @@ function Options() {
     };
     setConfigs([...configs, newConfig]);
     setCurrentConfig(newConfig);
+
+    toastSucc("添加成功");
   }, [configs]);
+
+  const onCopy = useCallback(
+    (targetItem: ConfigItem) => {
+      const newConfig: ConfigItem = cloneDeep(targetItem);
+      newConfig.key = `config-${Date.now()}`;
+      newConfig.title = targetItem.title + "-copy";
+
+      const targetIndex = configs.findIndex((i) => i.key === targetItem.key);
+      const nextConfig = [...configs];
+      nextConfig.splice(targetIndex + 1, 0, newConfig);
+
+      setConfigs(nextConfig);
+      setCurrentConfig(newConfig);
+
+      toastSucc("复制成功");
+    },
+    [configs]
+  );
   const onConfigDel = useCallback(
     (targetItem: ConfigItem) => {
       // if (configs.length <= 1) {
@@ -91,19 +112,26 @@ function Options() {
       if (targetItem.key === currentConfig?.key) {
         setCurrentConfig(newConfigs[0]);
       }
+
+      toastSucc("删除成功");
     },
     [configs, currentConfig?.key]
   );
   const onConfigImport = useCallback(() => {
     getConfigFile().then((data) => {
-      const newConfigs = JSON.parse(data) as ConfigItem[];
-      const newKeys = configs.map((i) => i.key);
-      const targetConfig = [
-        ...configs.filter((i) => !newKeys.includes(i.key)),
-        ...newConfigs,
-      ];
-      setConfigs(targetConfig);
-      message.success("导入成功");
+      try {
+        const newConfigs = JSON.parse(data) as ConfigItem[];
+        const newKeys = configs.map((i) => i.key);
+        const targetConfig = [
+          ...configs.filter((i) => !newKeys.includes(i.key)),
+          ...newConfigs,
+        ];
+        setConfigs(targetConfig);
+        message.success("导入成功");
+      } catch (error) {
+        alertError("导入失败：JSON反序列化失败，请检查您的配置文件");
+        return;
+      }
     });
   }, [configs]);
   const onConfigExport = useCallback(() => {
@@ -168,7 +196,9 @@ function Options() {
           <SwitchBlock configs={configs} />
           <ConfigNavBlock
             configs={configs}
+            currentKey={currentConfig?.key}
             onConfigAdd={onConfigAdd}
+            onCopy={onCopy}
             onConfigEdit={setCurrentConfig}
             onConfigDel={onConfigDel}
             onConfigImport={onConfigImport}
