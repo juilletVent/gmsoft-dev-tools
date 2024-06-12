@@ -46,6 +46,11 @@ class RequestManager {
     // XHR对象和fetch对象的Header设置方式不同，分别处理
     if (xhr instanceof MyXMLHttpRequest) {
       for (const cookie of this.targetCookies) {
+        // 应用端自己设置了Authorization字段，则不再注入，直接中断
+        if (xhr.requestHeaders.has("Authorization")) {
+          break;
+        }
+
         if (cookie.name === "Auth") {
           xhr.setRequestHeader("Authorization", `Auth ${cookie.value}`);
           break;
@@ -57,6 +62,10 @@ class RequestManager {
     const initObj = xhr as RequestInit;
     const headers = initObj.headers || {};
     for (const cookie of this.targetCookies) {
+      // 如果Header中已经有Authorization字段，则不再注入，直接中断
+      if (!isEmpty(headers["Authorization"])) {
+        break;
+      }
       if (cookie.name === "Auth") {
         headers["Authorization"] = `Auth ${cookie.value}`;
         break;
@@ -135,10 +144,12 @@ class RequestManager {
 
 class MyXMLHttpRequest extends XMLHttpRequest {
   manager: RequestManager;
+  requestHeaders: Map<string, string>;
 
   constructor() {
     super();
     this.manager = new RequestManager();
+    this.requestHeaders = new Map();
   }
 
   open(...args: any[]) {
@@ -149,6 +160,16 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     // 设置Header，setRequestHeader必须在open之后，send之前调用，因此插入在此位置
     this.manager.injectAuthHeader(this);
     return result;
+  }
+
+  setRequestHeader(name: string, value: string): void {
+    // 如果Header已经设置过，则不再设置
+    if (this.requestHeaders.has(name)) {
+      console.info("[MyRequest] Header %s has been set, ignore", name);
+      return;
+    }
+    this.requestHeaders.set(name, value);
+    super.setRequestHeader(name, value);
   }
 
   /**
