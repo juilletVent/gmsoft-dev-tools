@@ -10,42 +10,14 @@ import { ExtensionsStorageUtils } from "../../utils/storage";
 import PasswordConfigBlock from "./components/PasswordConfigBlock";
 import { alertError, toastSucc } from "../../components/popup";
 
-// const defaultConfig: ConfigItem = {
-//   key: "config-default",
-//   title: "Default",
-//   cookiesPettern: ["Auth"],
-//   rules: [
-//     {
-//       key: "item-default",
-//       domain: "www.gpwbeta.com",
-//       pattern: ["/gwebsit", "/djc-gateway"],
-//     },
-//   ],
-// };
-
 function getConfigFile() {
-  let fileCancle = true;
   const input = document.createElement("input");
   input.type = "file";
   input.hidden = true;
   document.body.appendChild(input);
 
   const result = new Promise<any>((res) => {
-    input.click();
-    window.addEventListener(
-      "focus",
-      () => {
-        setTimeout(() => {
-          if (fileCancle) {
-            input.onchange = null;
-            document.body.removeChild(input);
-          }
-        }, 100);
-      },
-      { once: true }
-    );
     input.onchange = () => {
-      fileCancle = false;
       const file = get(input, "files[0]");
       if (file) {
         const reader = new FileReader();
@@ -56,6 +28,7 @@ function getConfigFile() {
         };
       }
     };
+    input.click();
   });
 
   return result;
