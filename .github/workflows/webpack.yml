@@ -31,3 +31,40 @@ jobs:
       - name: Build
         run: |
           yarn build
+
+      - name: Archive production artifacts
+        if: success()
+        run: |
+          mkdir -p release
+          cp -r dist/* release/
+
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release
+          asset_name: release-v${{ env.VERSION }}.zip
+          asset_content_type: application/zip
+
+      - name: Zip release directory
+        run: |
+          zip -r release.zip release/
