@@ -23,9 +23,10 @@ class RequestManager {
       });
       return match;
     });
-    const targetDomain = get(matchRules, "[0].domain");
-    const targetCookies = cookiesConfig.filter(
-      (cookie) => cookie.domain === targetDomain
+
+    const targetDomains = matchRules.map((item) => item.domain);
+    const targetCookies = cookiesConfig.filter((cookie) =>
+      targetDomains.includes(cookie.domain)
     );
     this.targetCookies = targetCookies;
   }
