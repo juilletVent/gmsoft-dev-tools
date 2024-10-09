@@ -41,7 +41,7 @@ class RequestManager {
     });
   }
 
-  injectAuthHeader(xhr: RequestInit): RequestInit;
+  injectAuthHeader(xhr?: RequestInit): RequestInit | undefined;
   injectAuthHeader(xhr: MyXMLHttpRequest): void;
   injectAuthHeader(xhr: MyXMLHttpRequest | RequestInit): RequestInit {
     // XHR对象和fetch对象的Header设置方式不同，分别处理
@@ -57,6 +57,11 @@ class RequestManager {
           break;
         }
       }
+      return;
+    }
+
+    if (!xhr) {
+      // 如果没有传入RequestInit对象，则直接返回
       return;
     }
 
