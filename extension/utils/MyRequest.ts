@@ -60,12 +60,7 @@ class RequestManager {
       return;
     }
 
-    if (!xhr) {
-      // 如果没有传入RequestInit对象，则直接返回
-      return;
-    }
-
-    const initObj = xhr as RequestInit;
+    const initObj = (xhr || {}) as RequestInit; // 处理空指针的情况
     const headers = initObj.headers || {};
     for (const cookie of this.targetCookies) {
       // 如果Header中已经有Authorization字段，则不再注入，直接中断
