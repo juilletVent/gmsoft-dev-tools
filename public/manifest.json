@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Gmsoft Dev Tools",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "大家软件前端开发工具，辅助开发环境接口Cookie注入，帮助快速填充密码",
   "permissions": ["cookies", "storage"],
   "host_permissions": ["*://*/*"],

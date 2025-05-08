@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { get, isEmpty, uniqueId } from "lodash";
+import { get, isEmpty, isNil, uniqueId } from "lodash";
 
 class RequestManager {
   requestId: string;
@@ -184,8 +184,11 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     // 请求结束后，清空本轮注入的Cookie，清理请求ID队列，发送recoverSend事件
     const finishCallback = () => this.manager.done();
 
-    // 如果当前请求ID队列不为空，则暂缓执行，并将当前请求ID推入请求ID队列，并注册recoverSend事件
-    if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
+    // 如果当前请求ID队列不为空，或者目标站点Cookie获取尚未完成，则暂缓执行，并将当前请求ID推入请求ID队列，并注册recoverSend事件
+    if (
+      isNil(window.cookieConfig) ||
+      (window.__myxhrsending && !isEmpty(window.__myxhrsending))
+    ) {
       window.__myxhrsending.push(this.manager.requestId);
       const recoverCallback = () => {
         if (window.__myxhrsending[0] === this.manager.requestId) {

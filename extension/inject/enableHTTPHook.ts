@@ -18,8 +18,12 @@ import { MyXMLHttpRequest, myFetch } from "../utils/MyRequest";
     document.removeEventListener("receiveConfig", window.__getConfig);
   }
   window.__getConfig = function (e) {
-    window.cookieConfig = e.detail.cookies;
+    window.cookieConfig = e.detail.cookies || [];
     window.rulesConfig = e.detail.config;
+
+    // 发送recoverSend事件，启动等待的接口队列
+    const event = new CustomEvent("recoverSend");
+    window.dispatchEvent(event);
   };
   document.addEventListener("receiveConfig", window.__getConfig);
 
