@@ -31,7 +31,8 @@ class RequestManager {
     this.targetCookies = targetCookies;
   }
 
-  injectCookie() {
+  injectCookie(requestURL: string) {
+    this.prepareCookie(requestURL);
     this.targetCookies.map((cookie) => {
       // Auth是特殊Cookie，不需要注入，使用Header的方式注入
       if (cookie.name === "Auth") {
@@ -146,6 +147,8 @@ class RequestManager {
 class MyXMLHttpRequest extends XMLHttpRequest {
   manager: RequestManager;
   requestHeaders: Map<string, string>;
+  requestURL: string;
+  openArgs: any[];
 
   constructor() {
     super();
@@ -154,23 +157,19 @@ class MyXMLHttpRequest extends XMLHttpRequest {
   }
 
   open(...args: any[]) {
-    this.manager.prepareCookie(args[1]);
-    args[1] = this.manager.replaceParams(args[1]);
-    // @ts-ignore
-    const result = super.open(...args);
-    // 设置Header，setRequestHeader必须在open之后，send之前调用，因此插入在此位置
-    this.manager.injectAuthHeader(this);
-    return result;
+    // 记录open方法的参数，用于后续接口调用
+    this.openArgs = args;
   }
 
+  /** 覆盖原有实现，将应用侧调用设置的Header进行延迟应用，否将导致异常 */
   setRequestHeader(name: string, value: string): void {
-    // 如果Header已经设置过，则不再设置
-    if (this.requestHeaders.has(name)) {
-      console.info("[MyRequest] Header %s has been set, ignore", name);
-      return;
-    }
     this.requestHeaders.set(name, value);
-    super.setRequestHeader(name, value);
+  }
+
+  applyRequestHeader() {
+    for (const [name, value] of this.requestHeaders.entries()) {
+      super.setRequestHeader(name, value);
+    }
   }
 
   /**
@@ -184,15 +183,25 @@ class MyXMLHttpRequest extends XMLHttpRequest {
     // 请求结束后，清空本轮注入的Cookie，清理请求ID队列，发送recoverSend事件
     const finishCallback = () => this.manager.done();
 
+    if (isNil(window.__myxhrsending)) {
+      window.__myxhrsending = [];
+    }
+
     // 如果当前请求ID队列不为空，或者目标站点Cookie获取尚未完成，则暂缓执行，并将当前请求ID推入请求ID队列，并注册recoverSend事件
-    if (
-      isNil(window.cookieConfig) ||
-      (window.__myxhrsending && !isEmpty(window.__myxhrsending))
-    ) {
+    if (isNil(window.cookieConfig) || !isEmpty(window.__myxhrsending)) {
       window.__myxhrsending.push(this.manager.requestId);
       const recoverCallback = () => {
         if (window.__myxhrsending[0] === this.manager.requestId) {
-          this.manager.injectCookie();
+          // 参数替换
+          this.requestURL = this.openArgs[1] = this.manager.replaceParams(
+            this.openArgs[1]
+          );
+          // 初始化连接
+          super.open.apply(this, this.openArgs);
+          this.manager.injectCookie(this.requestURL);
+          // 设置Header，setRequestHeader必须在open之后，send之前调用
+          this.manager.injectAuthHeader(this);
+          this.applyRequestHeader();
           // 启动超时定时器，如果未能在3000ms内得到响应，则不再等待，启动后续流程
           this.manager.startCountDown();
           // 订阅请求完成，完成后启动后续调用流程
@@ -206,10 +215,14 @@ class MyXMLHttpRequest extends XMLHttpRequest {
       return;
     }
 
-    // 如果当前请求ID队列为空，则直接执行接口调用
-    window.__myxhrsending = window.__myxhrsending || [];
+    this.requestURL = this.openArgs[1] = this.manager.replaceParams(
+      this.openArgs[1]
+    );
+    super.open.apply(this, this.openArgs);
     window.__myxhrsending.push(this.manager.requestId);
-    this.manager.injectCookie();
+    this.manager.injectCookie(this.requestURL);
+    this.manager.injectAuthHeader(this);
+    this.applyRequestHeader();
     this.manager.startCountDown();
     this.addEventListener("loadend", finishCallback);
     return super.send(body);
@@ -225,36 +238,40 @@ function myFetch(
 ): Promise<Response> {
   const requestManager = new RequestManager();
   const finishCallback = () => requestManager.done();
-  requestManager.prepareCookie(input.toString());
   const process = new Promise<void>((resolve) => {
-    if (window.__myxhrsending && !isEmpty(window.__myxhrsending)) {
+    if (isNil(window.__myxhrsending)) {
+      window.__myxhrsending = [];
+    }
+
+    if (isNil(window.cookieConfig) || !isEmpty(window.__myxhrsending)) {
       window.__myxhrsending.push(requestManager.requestId);
       const recoverCallback = () => {
+        // 请求终止控制信号，如果请求终止，则从请求ID队列中移除当前请求ID，并移除自定义事件监听
+        if (init && init.signal) {
+          init.signal.addEventListener("abort", () => {
+            window.__myxhrsending = window.__myxhrsending.filter(
+              (i) => i !== requestManager.requestId
+            );
+            window.removeEventListener("recoverSend", recoverCallback);
+          });
+          return;
+        }
+
         if (window.__myxhrsending[0] === requestManager.requestId) {
-          requestManager.injectCookie();
           window.removeEventListener("recoverSend", recoverCallback);
           resolve();
         }
       };
 
-      if (init && init.signal) {
-        init.signal.addEventListener("abort", () => {
-          window.__myxhrsending = window.__myxhrsending.filter(
-            (i) => i !== requestManager.requestId
-          );
-          window.removeEventListener("recoverSend", recoverCallback);
-        });
-      }
-
       window.addEventListener("recoverSend", recoverCallback);
       return;
     }
-    window.__myxhrsending = window.__myxhrsending || [];
+
     window.__myxhrsending.push(requestManager.requestId);
-    requestManager.injectCookie();
     resolve();
   })
     .then(() => {
+      requestManager.injectCookie(input.toString());
       const finalInit = requestManager.injectAuthHeader(init);
       return window.originalFetch(
         requestManager.replaceParams(input.toString()),
