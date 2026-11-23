@@ -6,6 +6,7 @@ import ConfigNavBlock from "./components/ConfigNavBlock";
 import ConfigBlock, { ConfigItem, RuleItem } from "./components/ConfigBlock";
 import { message } from "antd";
 import { cloneDeep, get, mapKeys, uniqueId } from "lodash";
+import { arrayMove } from "@dnd-kit/sortable";
 import { ExtensionsStorageUtils } from "../../utils/storage";
 import PasswordConfigBlock from "./components/PasswordConfigBlock";
 import { alertError, toastSucc } from "../../components/popup";
@@ -90,6 +91,16 @@ function Options() {
     },
     [configs, currentConfig?.key]
   );
+  const onConfigReorder = useCallback((activeKey: string, overKey: string) => {
+    setConfigs((prevConfigs) => {
+      const oldIndex = prevConfigs.findIndex((item) => item.key === activeKey);
+      const newIndex = prevConfigs.findIndex((item) => item.key === overKey);
+      if (oldIndex < 0 || newIndex < 0) {
+        return prevConfigs;
+      }
+      return arrayMove(prevConfigs, oldIndex, newIndex);
+    });
+  }, []);
   const onConfigImport = useCallback(() => {
     getConfigFile().then((data) => {
       try {
@@ -157,7 +168,10 @@ function Options() {
     ExtensionsStorageUtils.getConfig().then((config) => {
       const configs = config.configs || [];
       setConfigs(configs);
-      setCurrentConfig(configs[0]);
+      const activeConfig =
+        configs.find((item: ConfigItem) => item.key === config.target) ||
+        configs[0];
+      setCurrentConfig(activeConfig);
     });
   }, []);
 
@@ -174,6 +188,7 @@ function Options() {
             onCopy={onCopy}
             onConfigEdit={setCurrentConfig}
             onConfigDel={onConfigDel}
+            onConfigReorder={onConfigReorder}
             onConfigImport={onConfigImport}
             onConfigExport={onConfigExport}
           />

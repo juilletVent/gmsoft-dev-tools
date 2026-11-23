@@ -2,7 +2,7 @@ import styled from "styled-components";
 import optBg from "../../imgs/opt-bg.png";
 
 export const OptionLayout = styled.div`
-  min-width: 1250px;
+  min-width: 1360px;
   background: url(${optBg});
   background-attachment: fixed;
   .ant-card {
@@ -73,6 +73,22 @@ export const BlockLayout = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  .drag-handle {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+    color: #bfbfbf;
+    cursor: grab;
+    transition: color 0.2s;
+    &:hover {
+      color: #595959;
+    }
+    &:active {
+      cursor: grabbing;
+    }
+  }
   .ant-list-item-action {
     margin-left: 5px;
     button {
@@ -100,7 +116,7 @@ export const ContentLayout = styled.div`
 `;
 
 export const NavLayout = styled.div`
-  width: 300px;
+  width: 400px;
 `;
 export const ConfigLayout = styled.div`
   flex: none;
